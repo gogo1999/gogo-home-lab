@@ -1,0 +1,24 @@
+Como cabe esperar, el primer paso para cualquier proyecto es la instalación del sistema. Para mi home lab, decidí utilizar el sistema operativo Debian, debido a mi mayor familiaridad con el sistema.
+
+Desafortunadamente, ya desde la fase de instalación del sistema operativo, estaba presentando problemas. Originalmente, intenté instalar la distribución de Ubuntu Server, pero una vez iniciado el 
+proceso de instalación, el sistema se quedaba congelado. Ubuntu server no era capaz de proporcionar un código de error que me diera a entender el problema con la instalación, por lo que no me quedó 
+mayor remedia que intentar diferentes distribuciones. Después de ello, intenté con Fedora server, que también presentaba problemas durante la instalación. Esta vez, el cliente de instalación se detenía 
+constantemente. 
+
+Finalmente probé debian, en donde una vez más, encontré un error en la instalación. Sin embargo, esta vez el sistema pudo darme mayor información a través de los logs del sistemas, por lo que encontré 
+este error:
+
+fclose: no space left on device
+
+Originalmente no entendía el motivo de este error, debido a que estaba instalando Debian utilizando toda la capacidad de un disco duro de 1 terabyte. Sin embargo, despues de una pequeña invetigación 
+por internet y recordando experiencias pasadas instalando distribución en dicha laptop, llegué a la conclusión de que el problema se encontraba en el módulo de pcie_aspm. PCIe Active State Power 
+Management, o pcie_aspm,es un mecanismo de administración de energía para que los dispositivos PCI Express obtengan ahorros de energía mientras se encuentran en un estado completamente activo. Funciona
+principalmente en laptops o dispositivos moviles. Este módulo esta generando una cantidad de logs abismal durante el proceso de instalación, por lo que llenaba todo el disco antes de poder finalizar.
+
+Para combatir este problema, esta vez pobré añadiendo una opciones en el menu del grub antes de la instalación:
+
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash" 
+pcie_aspm=off
+
+Para así poder desabilitar los flagas de kernel. 
+Finalmente, logre realizar la instalación correctamente, añadiendo tanto un usuario root como un usuario inicial "gogo".
